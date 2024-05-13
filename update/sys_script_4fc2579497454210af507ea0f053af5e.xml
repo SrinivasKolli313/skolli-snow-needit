@@ -28,20 +28,24 @@
         <rest_variables/>
         <role_conditions/>
         <script><![CDATA[(function executeRule(current, previous /*null when async*/) {
-
 	var rightNow = new GlideDateTime();
-	var whenNeeded= new GlideDateTime(current.u_when_needed);
-	var todayDate=rightNow.getLocalDate();
-	var neededDate=whenNeeded.getLocalDate();
-	
-	if(todayDate.compareTo(neededDate)==0){
+	var whenNeeded = new GlideDateTime(current.u_when_needed);
+	var todayDate = rightNow.getLocalDate();
+	var neededDate = whenNeeded.getLocalDate();
+
+	if (todayDate.compareTo(neededDate) == 0) {
 		gs.addErrorMessage("You cannot submit requests for today. Submit for a future date");
 		current.setAbortAction(true);
-	} else if(whenNeeded.before(rightNow)){
-		gs.addErrorMessage("When needed date cannot be in the past. Your request has not been saved to the database.");
+	}
+	// Instantiate the NeedItUtils class.  Call the isDatePast method and pass the u_when_needed value.
+	var niutils = new NeedItUtils();
+	var isPast = niutils.isDatePast(current.u_when_needed);
+
+	// If the isDatePast method returns true, the date is in the past.
+	if (isPast == true) {
+		gs.addErrorMessage("When needed date cannot be in the past.  Your request has not been saved to the database.");
 		current.setAbortAction(true);
 	}
-
 })(current, previous);]]></script>
         <sys_class_name>sys_script</sys_class_name>
         <sys_created_by>admin</sys_created_by>
@@ -49,7 +53,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>4fc2579497454210af507ea0f053af5e</sys_id>
-        <sys_mod_count>9</sys_mod_count>
+        <sys_mod_count>10</sys_mod_count>
         <sys_name>NeedIt when needed field date</sys_name>
         <sys_overrides/>
         <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
@@ -57,7 +61,7 @@
         <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
         <sys_update_name>sys_script_4fc2579497454210af507ea0f053af5e</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-03-17 02:47:41</sys_updated_on>
+        <sys_updated_on>2024-05-03 08:14:46</sys_updated_on>
         <template/>
         <when>before</when>
     </sys_script>
